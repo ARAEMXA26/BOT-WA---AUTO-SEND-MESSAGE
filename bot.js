@@ -16,6 +16,24 @@ const PORT = 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+// Debugging Endpoint: Capture Puppeteer Screenshot
+app.get('/screenshot', async (req, res) => {
+    const isAdmin = req.query.admin === 'true' || req.query.owner === 'true';
+    if (!isAdmin) {
+        return res.status(403).send('Akses ditolak.');
+    }
+    if (!client || !client.pupPage) {
+        return res.status(400).send('Client WhatsApp belum diinisialisasi atau browser belum terbuka.');
+    }
+    try {
+        const screenshot = await client.pupPage.screenshot({ type: 'png' });
+        res.contentType('image/png');
+        res.send(screenshot);
+    } catch (err) {
+        res.status(500).send(`Gagal mengambil screenshot: ${err.message}`);
+    }
+});
+
 // State Management
 let client = null;
 let contacts = [];
@@ -251,7 +269,9 @@ function initWhatsAppClient(retryCount = 0) {
             '--disable-accelerated-2d-canvas',
             '--no-first-run',
             '--no-zygote',
-            '--disable-gpu'
+            '--disable-gpu',
+            '--disable-blink-features=AutomationControlled',
+            '--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
         ]
     };
 
@@ -290,6 +310,10 @@ function initWhatsAppClient(retryCount = 0) {
             clientId: 'dakauri-dashboard-bot',
             dataPath: path.join(persistDir, '.wwebjs_auth')
         }),
+        webVersionCache: {
+            type: 'remote',
+            remotePath: 'https://raw.githubusercontent.com/wwebjs/web-api-client/main/wwebjs-api-client-bootstrap.html'
+        },
         puppeteer: puppeteerOptions
     });
 
@@ -563,7 +587,7 @@ async function executeBroadcast() {
             const footerLabel = '\n\n_BOT KWU Dakauri 2026_';
             const finalMessage = broadcastMessage + footerLabel;
             
-            await promiseWithTimeout(client.sendMessage(target.id, finalMessage), 15000, `Kirim ke ${targetName}`);
+            await promiseWithTimeout(client.sendMessage(target.id, finalMessage), 45000, `Kirim ke ${targetName}`);
             
             target.status = 'SUCCESS';
             broadcastState.sent++;
