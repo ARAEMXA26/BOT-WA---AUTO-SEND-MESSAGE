@@ -700,9 +700,11 @@ io.on('connection', (socket) => {
     // Sync configs
     socket.on('update-config', (data) => {
         if (data.message !== undefined) broadcastMessage = data.message;
-        if (data.delayValue !== undefined) {
+        if (data.delayValue !== undefined && data.delayValue !== '') {
             const parsed = parseInt(data.delayValue, 10);
-            delayValue = isNaN(parsed) || parsed < 1 ? 10 : parsed;
+            if (!isNaN(parsed)) {
+                delayValue = parsed < 1 ? 1 : parsed;
+            }
         }
         if (data.delayUnit !== undefined) delayUnit = data.delayUnit;
         

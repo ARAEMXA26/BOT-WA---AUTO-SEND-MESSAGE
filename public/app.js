@@ -420,14 +420,20 @@ socket.on('targets-list', (list) => {
 socket.on('config-update', (data) => {
     if (!data) return;
     if (data.broadcastMessage !== undefined) {
-        messageInput.value = data.broadcastMessage;
-        updateMessagePreview();
+        if (document.activeElement !== messageInput) {
+            messageInput.value = data.broadcastMessage;
+            updateMessagePreview();
+        }
     }
     if (data.delayValue !== undefined) {
-        delayValue.value = data.delayValue;
+        if (document.activeElement !== delayValue) {
+            delayValue.value = data.delayValue;
+        }
     }
     if (data.delayUnit !== undefined) {
-        delayUnit.value = data.delayUnit;
+        if (document.activeElement !== delayUnit) {
+            delayUnit.value = data.delayUnit;
+        }
     }
 });
 
