@@ -366,13 +366,22 @@ function initWhatsAppClient(retryCount = 0) {
                 
                 try {
                     await client.logout();
-                    await client.destroy();
                 } catch (e) {
                     addLog(`Error saat logout nomor tidak sah: ${e.message}`);
+                    if (client) {
+                        try {
+                            await client.destroy();
+                        } catch (destroyErr) {}
+                        client = null;
+                    }
+                    const authPath = path.join(persistDir, '.wwebjs_auth');
+                    if (fs.existsSync(authPath)) {
+                        try {
+                            fs.rmSync(authPath, { recursive: true, force: true });
+                        } catch (rmErr) {}
+                    }
+                    initWhatsAppClient();
                 }
-                
-                // Reinitialize client to show new QR
-                initWhatsAppClient();
                 return;
             }
 
@@ -398,13 +407,38 @@ function initWhatsAppClient(retryCount = 0) {
         }
     });
 
-    client.on('disconnected', (reason) => {
+    client.on('disconnected', async (reason) => {
         addLog(`Koneksi WhatsApp terputus: ${reason}`);
         userInfo = null;
         contacts = [];
         groups = [];
         qrCodeBase64 = null;
         updateConnectionStatus('DISCONNECTED');
+
+        // Prevent memory leaks and locks by destroying the client
+        if (client) {
+            try {
+                await client.destroy();
+                addLog('Client yang terputus berhasil dibersihkan.');
+            } catch (e) {
+                // Ignore if already destroyed
+            }
+            client = null;
+        }
+
+        // Always clean up session cache directory on disconnect/logout so it generates new QR code
+        const authPath = path.join(persistDir, '.wwebjs_auth');
+        if (fs.existsSync(authPath)) {
+            try {
+                fs.rmSync(authPath, { recursive: true, force: true });
+                addLog('Folder cache sesi dibersihkan.');
+            } catch (err) {
+                addLog(`Gagal menghapus folder sesi: ${err.message}`);
+            }
+        }
+
+        // Reinitialize client to display a fresh QR code
+        initWhatsAppClient();
     });
 
     // Start initialization timeout — if no WA event fires within INIT_TIMEOUT_MS,
@@ -865,37 +899,52 @@ io.on('connection', (socket) => {
     // Log out sessions
     socket.on('logout-wa', async () => {
         addLog('Mencabut sesi WhatsApp...');
+        broadcastState.status = 'IDLE';
+        broadcastState.currentTarget = null;
+        saveState();
+
         if (client) {
             try {
-                broadcastState.status = 'IDLE';
-                broadcastState.currentTarget = null;
-                saveState();
-                
                 await client.logout();
-                await client.destroy();
+                // client.logout() triggers 'disconnected' event,
+                // which automatically handles destroy, cleanup, and re-init
             } catch (err) {
-                addLog(`Error saat logout: ${err.message}. Memaksa destroy.`);
+                addLog(`Error saat logout: ${err.message}. Memaksa pembersihan.`);
+                // Fallback if client.logout fails
+                if (client) {
+                    try {
+                        await client.destroy();
+                    } catch (e) {}
+                    client = null;
+                }
+                const authPath = path.join(persistDir, '.wwebjs_auth');
+                if (fs.existsSync(authPath)) {
+                    try {
+                        fs.rmSync(authPath, { recursive: true, force: true });
+                    } catch (e) {}
+                }
+                userInfo = null;
+                contacts = [];
+                groups = [];
+                qrCodeBase64 = null;
+                updateConnectionStatus('DISCONNECTED');
+                initWhatsAppClient();
             }
-        }
-        
-        const authPath = path.join(persistDir, '.wwebjs_auth');
-        if (fs.existsSync(authPath)) {
-            try {
-                fs.rmSync(authPath, { recursive: true, force: true });
-                addLog('Folder cache sesi dibersihkan.');
-            } catch (err) {
-                addLog(`Gagal menghapus folder sesi: ${err.message}`);
+        } else {
+            // No active client, force clean session folder and reinit
+            const authPath = path.join(persistDir, '.wwebjs_auth');
+            if (fs.existsSync(authPath)) {
+                try {
+                    fs.rmSync(authPath, { recursive: true, force: true });
+                } catch (e) {}
             }
+            userInfo = null;
+            contacts = [];
+            groups = [];
+            qrCodeBase64 = null;
+            updateConnectionStatus('DISCONNECTED');
+            initWhatsAppClient();
         }
-
-        userInfo = null;
-        contacts = [];
-        groups = [];
-        qrCodeBase64 = null;
-        updateConnectionStatus('DISCONNECTED');
-        
-        // Reinitialize client to show new QR
-        initWhatsAppClient();
     });
 });
 
