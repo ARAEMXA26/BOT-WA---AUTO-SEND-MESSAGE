@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Local cache & credentials
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Local persistence directory (Railway will mount its own persistent volume here)
+persist/
+
+# Legacy local files (already migrated to persist/ dynamically)
+manual_contacts.json
+manual_groups.json
+broadcast_state.json

@@ -1,0 +1,22 @@
+{
+  "name": "whatsapp-broadcast-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp Broadcast Bot controlled via Chat with Web QR Screen - Dakauri 2026",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "node bot.js",
+    "tailwind:build": "tailwindcss -i ./public/src/input.css -o ./public/style.css",
+    "tailwind:watch": "tailwindcss -i ./public/src/input.css -o ./public/style.css --watch"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "qrcode": "^1.5.3",
+    "qrcode-terminal": "^0.12.0",
+    "socket.io": "^4.7.5",
+    "whatsapp-web.js": "^1.26.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.1"
+  }
+}

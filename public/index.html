@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WA Broadcast Bot Dashboard - Dakauri 2026</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=2026_v5">
+</head>
+<body class="bg-[radial-gradient(circle_at_top_left,#0d0d1e,#06060c)] text-zinc-100 font-sans min-h-screen p-5 overflow-x-hidden leading-relaxed">
+    
+    <!-- ========================================== -->
+    <!-- SCREEN 1: LOGIN SCANNER SCREEN             -->
+    <!-- ========================================== -->
+    <div id="login-screen" class="fixed inset-0 flex flex-col justify-center items-center p-4 bg-[#05050b] z-50">
+        <main class="w-full max-w-md bg-[#12121e]/80 border border-white/8 rounded-2xl p-6 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+            <header class="flex justify-between items-center pb-4 border-b border-white/8 mb-6">
+                <div class="flex items-center gap-2">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <h1 class="text-lg font-bold tracking-wide">DAKAURI 2026</h1>
+                </div>
+                <div class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">WA BOT</div>
+            </header>
+            
+            <div class="space-y-6">
+                <div class="flex items-center gap-2.5 bg-white/3 border border-white/5 rounded-xl px-4 py-3">
+                    <div id="login-status-dot" class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulseDisconnected"></div>
+                    <span id="login-status-title" class="text-sm font-medium text-zinc-300">Menginisialisasi Bot...</span>
+                </div>
+
+                <div class="flex flex-col items-center justify-center bg-black/30 border border-white/5 rounded-xl p-6 min-h-[250px] relative overflow-hidden">
+                    <div id="view-loading" class="flex flex-col items-center justify-center text-center space-y-4">
+                        <div class="w-8 h-8 border-4 border-indigo-500/30 border-t-indigo-400 rounded-full animate-spin"></div>
+                        <p class="text-zinc-400 text-sm max-w-[280px]">Menghubungkan ke layanan WhatsApp, harap tunggu sebentar...</p>
+                    </div>
+
+                    <div id="view-qr" class="hidden flex-col items-center justify-center space-y-4">
+                        <div class="relative p-2.5 bg-white rounded-lg shadow-lg max-w-[200px] aspect-square flex items-center justify-center overflow-hidden">
+                            <div class="scanline"></div>
+                            <img id="qr-image" src="" alt="WhatsApp QR Code" class="w-full h-full object-contain">
+                        </div>
+                        <p class="text-indigo-400 text-xs font-semibold text-center max-w-[240px]">Pindai kode QR di atas dengan WhatsApp Anda untuk menyambungkan.</p>
+                    </div>
+
+                    <div id="view-offline" class="hidden flex-col items-center justify-center text-center space-y-4">
+                        <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-zinc-200">Bot Sedang Offline</h3>
+                        <p class="text-zinc-400 text-[13px] max-w-[280px]">Layanan WhatsApp Bot sedang tidak terhubung. Silakan hubungi Administrator untuk mengaktifkan kembali bot.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white/2 border border-white/5 rounded-xl p-4 space-y-2">
+                    <h3 class="text-xs font-semibold text-zinc-300 uppercase tracking-wide">Cara Menghubungkan:</h3>
+                    <ol class="list-decimal list-inside text-xs text-zinc-400 space-y-1.5 leading-relaxed">
+                        <li>Buka aplikasi <strong>WhatsApp</strong> di handphone Anda.</li>
+                        <li>Ketuk <strong>Menu</strong> (titik tiga) atau <strong>Pengaturan</strong>.</li>
+                        <li>Pilih <strong>Perangkat Tertaut</strong> &rarr; <strong>Tautkan Perangkat</strong>.</li>
+                        <li>Arahkan kamera ke kode QR di atas untuk memindai.</li>
+                    </ol>
+                </div>
+            </div>
+        </main>
+        <footer class="mt-6 text-zinc-600 text-xxs font-medium tracking-wider">
+            <p>BOT KWU Dakauri 2026 &copy; All Rights Reserved</p>
+        </footer>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: CONTROL DASHBOARD                -->
+    <!-- ========================================== -->
+    <div id="dashboard-screen" class="hidden max-w-[1400px] mx-auto flex flex-col gap-5">
+        
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 px-6 bg-[#12121e]/70 border border-white/8 rounded-2xl backdrop-blur-md shadow-2xl">
+            <div class="flex items-center gap-2">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <h1 class="text-lg font-bold tracking-wide">DAKAURI 2026 <span class="text-indigo-400 font-semibold ml-1 text-sm bg-indigo-500/10 px-2 py-0.5 border border-indigo-500/20 rounded-full">WA BOT</span></h1>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3 bg-white/3 border border-white/5 px-4 py-1.5 rounded-xl">
+                    <div class="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span id="user-pushname" class="text-xs font-semibold text-zinc-100">Loading Name...</span>
+                        <span id="user-wid" class="text-xxs text-zinc-400">Loading number...</span>
+                    </div>
+                </div>
+                <button id="btn-logout" class="py-1.5 px-3 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/20 rounded-xl font-semibold text-xs transition-all duration-200 active:scale-97 flex items-center gap-1.5">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Log Out
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Workspace -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            
+            <!-- Column 1: Config & Message Composer -->
+            <div class="flex flex-col gap-5 lg:h-full">
+                <section class="bg-[#12121e]/70 border border-white/8 rounded-2xl backdrop-blur-md shadow-2xl flex flex-col overflow-hidden lg:h-full">
+                    <div class="bg-[#1c1c2d]/40 px-5 py-3.5 border-b border-white/8">
+                        <h2 class="text-sm font-semibold text-zinc-100">Kampanye Siaran (Broadcast)</h2>
+                    </div>
+                    <div class="p-5 flex-grow space-y-4">
+                        <!-- Message Input -->
+                        <div class="flex flex-col gap-2">
+                            <label for="message-input" class="text-xs font-semibold text-zinc-300">Isi Pesan Broadcast</label>
+                            <textarea id="message-input" placeholder="Tulis pesan siaran Anda di sini..." rows="5" class="w-full bg-black/35 border border-white/8 text-zinc-100 p-3 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-y"></textarea>
+                        </div>
+
+                        <!-- Live Preview -->
+                        <div class="flex flex-col gap-2">
+                            <span class="text-xxs font-bold text-zinc-400 uppercase tracking-wider">Preview Pesan Terkirim</span>
+                            <div class="message-preview rounded-xl p-3 max-h-[180px] overflow-y-auto flex flex-col">
+                                <div class="preview-bubble bg-[#005c4b] text-[#e9edef] self-end p-2 px-3 pb-1.5 rounded-lg rounded-tr-none max-w-[85%] w-fit min-w-[150px] mr-2 mb-0.5 text-xs leading-normal relative shadow-[0_1.5px_1px_rgba(0,0,0,0.25)] white-space-pre-wrap word-break-break-word inline-block">
+                                    <div id="preview-text" class="preview-text-body"></div>
+                                    <div class="preview-bubble-footer flex items-center justify-end gap-1 text-[0.6rem] text-white/55 mt-1 font-semibold italic">
+                                        <span>BOT KWU Dakauri 2026</span>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#53bdeb] fill-[#53bdeb] ml-0.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delay Config -->
+                        <div class="flex flex-col gap-2">
+                            <label for="delay-value" class="text-xs font-semibold text-zinc-300">Jeda Pengiriman (Interval)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="delay-value" value="10" min="1" step="1" class="w-[60%] bg-black/35 border border-white/8 text-zinc-100 p-2.5 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                                <select id="delay-unit" class="w-[40%] bg-black/35 border border-white/8 text-zinc-100 p-2.5 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                                    <option value="seconds">Detik</option>
+                                    <option value="minutes">Menit</option>
+                                    <option value="hours">Jam</option>
+                                    <option value="days">Hari</option>
+                                </select>
+                            </div>
+                            <p class="text-xxs text-zinc-400 flex items-center gap-1">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="inline-block"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                Rekomendasi: >= 10 detik (hindari ban)
+                            </p>
+                        </div>
+
+                        <!-- Execution Controls -->
+                        <div class="flex gap-3 pt-2">
+                            <button id="btn-start" class="flex-grow py-2.5 px-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl font-semibold text-sm hover:from-emerald-400 hover:to-emerald-500 shadow-[0_4px_15px_rgba(16,185,129,0.3)] transition-all duration-200 active:scale-97 disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                Mulai Kirim
+                            </button>
+                            <button id="btn-stop" class="py-2.5 px-5 bg-gradient-to-r from-amber-500 to-amber-600 rounded-xl font-semibold text-sm hover:from-amber-400 hover:to-amber-500 shadow-[0_4px_15px_rgba(245,158,11,0.3)] transition-all duration-200 active:scale-97 disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect></svg>
+                                Stop
+                            </button>
+                        </div>
+
+                        <!-- Progress Section -->
+                        <div id="progress-bar-section" class="hidden pt-4 border-t border-white/10 space-y-3">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-semibold">Status: <strong id="progress-status-text" class="text-indigo-400">IDLE</strong></span>
+                                <span id="progress-percent" class="font-bold text-indigo-400">0%</span>
+                            </div>
+                            <div class="w-full bg-black/40 h-1.5 rounded-full overflow-hidden">
+                                <div id="progress-fill" class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400 shadow-[0_0_8px_rgba(0,242,254,0.3)] transition-all duration-300 w-0"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xxs text-zinc-400">
+                                <div>Total Target: <strong id="stat-total" class="text-zinc-200">0</strong></div>
+                                <div>Terkirim: <strong id="stat-sent" class="text-emerald-400">0</strong></div>
+                                <div>Gagal: <strong id="stat-failed" class="text-rose-400">0</strong></div>
+                                <div class="truncate">Mengirim Ke: <strong id="progress-current-target" class="text-indigo-400 font-semibold">-</strong></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-dashed border-white/5 text-[0.7rem] text-zinc-400">
+                                <div>Waktu Mulai: <strong id="time-start" class="text-zinc-200 font-medium">-</strong></div>
+                                <div>Estimasi Selesai: <strong id="time-est" class="text-zinc-200 font-medium">-</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Column 2: Available Targets Selection -->
+            <div class="flex flex-col gap-5 lg:h-full">
+                <section class="bg-[#12121e]/70 border border-white/8 rounded-2xl backdrop-blur-md shadow-2xl flex flex-col overflow-hidden lg:h-full">
+                    <div class="bg-[#1c1c2d]/40 px-5 py-3.5 border-b border-white/8 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-sm font-semibold text-zinc-100">Sumber Data WhatsApp</h2>
+                            <button id="btn-sync-data" class="w-7 h-7 rounded-full bg-white/3 border border-white/5 flex items-center justify-center text-zinc-300 hover:text-white transition-all cursor-pointer" title="Singkronkan Ulang Kontak/Grup">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                            </button>
+                        </div>
+                        <div class="flex gap-1 bg-black/40 p-0.5 rounded-full border border-white/5">
+                            <button id="tab-contacts" class="px-3 py-1 rounded-full text-xxs font-semibold transition-all bg-indigo-600 text-white shadow-[0_2px_8px_rgba(99,102,241,0.4)] cursor-pointer">Kontak</button>
+                            <button id="tab-groups" class="px-3 py-1 rounded-full text-xxs font-semibold transition-all bg-transparent text-zinc-400 hover:text-zinc-200 cursor-pointer">Grup</button>
+                        </div>
+                    </div>
+                    
+                    <div class="relative mx-5 mt-4">
+                        <svg class="search-icon text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="target-search" placeholder="Cari kontak..." class="w-full bg-black/35 border border-white/8 text-zinc-100 pl-9 pr-3 py-2 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
+                    </div>
+
+                    <div class="scroll-panel flex-grow overflow-y-auto p-5 h-[400px] lg:h-0 lg:min-h-0">
+                        <!-- Contacts panel -->
+                        <div id="contacts-panel" class="space-y-4">
+                            <div class="flex flex-col gap-2 bg-white/2 border border-white/5 p-3 rounded-xl w-full">
+                                <input type="text" id="manual-name" placeholder="Nama Kontak..." class="w-full bg-black/35 border border-white/8 text-zinc-200 p-2 rounded-lg text-xs focus:outline-none focus:border-indigo-500">
+                                <div class="flex gap-2">
+                                    <input type="text" id="manual-phone" placeholder="Nomor WA (0812...)..." class="flex-grow bg-black/35 border border-white/8 text-zinc-200 p-2 rounded-lg text-xs focus:outline-none min-w-0 focus:border-indigo-500">
+                                    <button id="btn-add-manual" class="shrink-0 py-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer" title="Tambah Kontak Manual">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        Tambah
+                                    </button>
+                                </div>
+                            </div>
+
+                            <ul id="contacts-ul" class="list-ul space-y-1.5 list-none">
+                                <li class="text-center py-6 text-xs text-zinc-500">Mengambil data kontak dari WhatsApp...</li>
+                            </ul>
+                        </div>
+
+                        <!-- Groups panel -->
+                        <div id="groups-panel" class="hidden space-y-4">
+                            <div class="flex flex-col gap-2 bg-white/2 border border-white/5 p-3 rounded-xl w-full">
+                                <input type="text" id="manual-group-name" placeholder="Nama Grup..." class="w-full bg-black/35 border border-white/8 text-zinc-200 p-2 rounded-lg text-xs focus:outline-none focus:border-indigo-500">
+                                <div class="flex gap-2">
+                                    <input type="text" id="manual-group-id" placeholder="ID Grup (contoh: 120363xxx@g.us)..." class="flex-grow bg-black/35 border border-white/8 text-zinc-200 p-2 rounded-lg text-xs focus:outline-none min-w-0 focus:border-indigo-500">
+                                    <button id="btn-add-manual-group" class="shrink-0 py-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer" title="Tambah Grup Manual">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        Tambah
+                                    </button>
+                                </div>
+                            </div>
+
+                            <ul id="groups-ul" class="list-ul space-y-1.5 list-none">
+                                <li class="text-center py-6 text-xs text-zinc-500">Mengambil data grup dari WhatsApp...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Column 3: Selected Target Queue -->
+            <div class="flex flex-col gap-5 lg:h-full">
+                <section class="bg-[#12121e]/70 border border-white/8 rounded-2xl backdrop-blur-md shadow-2xl flex flex-col overflow-hidden lg:h-full">
+                    <div class="bg-[#1c1c2d]/40 px-5 py-3.5 border-b border-white/8 flex justify-between items-center">
+                        <h2 class="text-sm font-semibold text-zinc-100">Target Terpilih (<span id="targets-count">0</span>)</h2>
+                        <button id="btn-clear-targets" class="text-xxs font-semibold text-rose-400 hover:text-rose-300 transition-all cursor-pointer">Hapus Semua</button>
+                    </div>
+                    <div class="scroll-panel flex-grow overflow-y-auto p-5 h-[400px] lg:h-0 lg:min-h-0">
+                        <ul id="queue-ul" class="list-ul space-y-1.5 list-none">
+                            <li class="text-center py-8 text-xs text-zinc-500 leading-normal">Belum ada target siaran terpilih. Pilih kontak atau grup dari daftar sebelah kiri.</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+
+        <!-- Bottom section: Progress Tracking & Logs terminal -->
+        <div class="flex flex-col gap-4 mt-1">
+            <!-- Logs Terminal -->
+            <section class="bg-[#12121e]/70 border border-white/8 rounded-2xl backdrop-blur-md shadow-2xl flex flex-col overflow-hidden">
+                <div class="bg-[#1c1c2d]/40 px-5 py-3 border-b border-white/8 flex justify-between items-center">
+                    <h2 class="text-sm font-semibold text-zinc-100">Terminal Aktivitas Real-Time</h2>
+                    <button id="btn-clear-logs" class="text-xxs font-semibold text-zinc-400 hover:text-zinc-200 transition-all cursor-pointer">Bersihkan Log</button>
+                </div>
+                <div class="p-5 flex-grow">
+                    <div id="terminal-body" class="w-full bg-black/50 border border-white/5 rounded-xl p-4 font-mono text-xs overflow-y-auto max-h-[220px] min-h-[140px] space-y-1">
+                        <div class="text-cyan-400">[Sistem] Dashboard dimuat. Menghubungkan socket...</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="text-center text-zinc-600 text-xxs font-medium tracking-wider py-4">
+            <p>BOT KWU Dakauri 2026 &copy; All Rights Reserved</p>
+        </footer>
+    </div>
+
+    <!-- Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- App JS -->
+    <script src="app.js?v=2026_v5"></script>
+</body>
+</html>
