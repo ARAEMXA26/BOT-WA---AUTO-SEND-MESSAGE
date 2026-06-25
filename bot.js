@@ -236,6 +236,24 @@ function getDelayMs() {
     return (delayValue || 10) * (multiplier[delayUnit] || 1000);
 }
 
+// Helper: Reinitialize Client on Fatal Browser Error (Self-Healing)
+async function reinitClientOnFatalError() {
+    updateConnectionStatus('DISCONNECTED');
+    if (client) {
+        try {
+            await client.destroy();
+            addLog('Client dengan error fatal berhasil di-destroy.');
+        } catch (e) {
+            // ignore
+        }
+        client = null;
+    }
+    setTimeout(() => {
+        addLog('Menginisialisasi ulang WhatsApp Bot secara otomatis...');
+        initWhatsAppClient();
+    }, 3000);
+}
+
 // Initialize WhatsApp Web Client
 function initWhatsAppClient(retryCount = 0) {
     const MAX_RETRIES = 3;
@@ -271,7 +289,9 @@ function initWhatsAppClient(retryCount = 0) {
             '--no-zygote',
             '--disable-gpu',
             '--disable-blink-features=AutomationControlled',
-            '--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+            '--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            '--disable-features=IsolateOrigins,site-per-process',
+            '--disable-site-isolation-trials'
         ]
     };
 
@@ -598,6 +618,21 @@ async function executeBroadcast() {
             broadcastState.failed++;
             addLog(`Gagal mengirim ke ${targetName}: ${error.message}`);
             io.emit('target-status-update', { id: target.id, status: 'FAILED' });
+
+            // Detect fatal Puppeteer/browser crashes (e.g., Attempted to use detached Frame)
+            const isFatalBrowserError = 
+                error.message.includes('detached Frame') || 
+                error.message.includes('destroyed') || 
+                error.message.includes('closed') || 
+                error.message.includes('Protocol error') ||
+                error.message.includes('Session closed') ||
+                error.message.includes('detached frame');
+
+            if (isFatalBrowserError) {
+                addLog(`⚠️ Terdeteksi error fatal browser pada Puppeteer: "${error.message}". Menghentikan pengiriman dan memicu restart bot otomatis...`);
+                reinitClientOnFatalError();
+                break; // Break the current broadcast loop execution
+            }
         }
         
         saveState();
